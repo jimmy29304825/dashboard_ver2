@@ -9,6 +9,8 @@ import pandas as pd
 import numpy as np
 import datetime
 
+themeColor = px.colors.sequential.PuRd
+
 def get_numbers(df_yesterday):
     visits = {
         'YC': {
@@ -32,7 +34,15 @@ def draw_fig_time_YC(df_yesterday):
     df_yesterday_time_YC = df_yesterday_time_YC.iloc[:, [i for i in range(2, 26)]].reset_index()
     df_yesterday_time_YC = df_yesterday_time_YC.melt(id_vars=["使用裝置"], var_name="時段", value_name="訪問人次")
     fig_time_YC = px.bar(df_yesterday_time_YC, x="時段", y="訪問人次", color='使用裝置', barmode='group')
-    fig_time_YC.update_layout(font_size=18, font_family='Microsoft JhengHei', font_color='white',paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(0,0,0,0)",legend=dict(x=0, y=1.1, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'),)
+    fig_time_YC.update_layout(
+        font_size=18, 
+        font_family='Microsoft JhengHei', 
+        font_color='white',
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        
+        legend=dict(x=0, y=1.1, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'),
+    )
     return fig_time_YC
 
 
@@ -42,21 +52,32 @@ def draw_fig_time_HF(df_yesterday):
     df_yesterday_time_HF = df_yesterday_time_HF.iloc[:, [i for i in range(2, 26)]].reset_index()
     df_yesterday_time_HF = df_yesterday_time_HF.melt(id_vars=["使用裝置"], var_name="時段", value_name="訪問人次")
     fig_time_HF = px.bar(df_yesterday_time_HF, x="時段", y="訪問人次", color='使用裝置', barmode='group')
-    fig_time_HF.update_layout(font_size=18, font_family='Microsoft JhengHei',font_color='white',paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(0,0,0,0)",legend=dict(x=0, y=1.1, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'),)
+    fig_time_HF.update_layout(
+        font_size=18, 
+        font_family='Microsoft JhengHei', 
+        font_color='white',
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        legend=dict(x=0, y=1.1, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'),
+    )
     return fig_time_HF
 
 
 def draw_fig_referer(df_yesterday):
     # sunburst for referer
-    themeColor =  px.colors.diverging.RdYlBu
     df_yesterday_referer = df_yesterday.iloc[:, [1,4,5]].groupby(['訪問網站', '訪問來源']).sum().reset_index()
     fig_referer = px.sunburst(df_yesterday_referer, 
                       path=['訪問網站', '訪問來源'],  # 分類變數
                       values='訪問人次',  # 面積依據資料
                       color='訪問網站',  # 分色變數
-                      hover_data=['訪問網站'],  # 游標顯示資料
+#                       hover_data=['訪問網站'],  # 游標顯示資料
                      )
-    fig_referer.update_traces(marker=dict(colors=themeColor, line=dict(color='#ffffff', width=2)))
+    fig_referer.update_traces(
+        marker=dict(
+#             colors=themeColor,
+            line=dict(color='#ffffff', width=2)
+        )
+    )
     fig_referer.update_layout(
         margin=dict(l=10, r=10, t=10, b=10),  # 圖形在畫布的邊界設定
         paper_bgcolor="rgba(0,0,0,0)",   # 畫布背景顏色
@@ -71,7 +92,6 @@ def draw_fig_referer(df_yesterday):
 
 def draw_fig_ad(df_yesterday):
     # sunburst for ad click
-    themeColor =  px.colors.diverging.RdYlBu
     df_yesterday_ad = df_yesterday.iloc[:, [1, -2,-1]].groupby('訪問網站').sum().reset_index().melt(id_vars=["訪問網站"], 
                                                           var_name="行為", 
                                                           value_name="人次")
@@ -79,10 +99,13 @@ def draw_fig_ad(df_yesterday):
                       path=['訪問網站', '行為'],  # 分類變數
                       values='人次',  # 面積依據資料
                       color='訪問網站',  # 分色變數
-                      hover_data=['訪問網站'],  # 游標顯示資料
+#                       hover_data=['訪問網站'],  # 游標顯示資料
                      )
     fig_ad.update_traces(
-        marker=dict(colors=themeColor, line=dict(color='#ffffff', width=2))
+        marker=dict(
+#             colors=themeColor, 
+            line=dict(color='#ffffff', width=2)
+        )
     )
     fig_ad.update_layout(
         margin=dict(l=10, r=10, t=10, b=10),  # 圖形在畫布的邊界設定
@@ -105,36 +128,44 @@ def draw_fig_function_YC(df_yesterday):
     fig_function_YC = go.Figure()
     fig_function_YC.add_trace(go.Bar(
         y=df_yesterday_function_YC['功能'].unique(),
-        x=df_yesterday_function_YC[df_yesterday_function_YC['使用裝置'] == 'app']['人次'],
-        name='app',
+        x=df_yesterday_function_YC[df_yesterday_function_YC['使用裝置'] == 'Web版']['人次'],
+        name='Web版',
         orientation='h',
-#         marker=dict(
-#             color='rgba(246, 78, 139, 0.6)',
-#             line=dict(color='rgba(246, 78, 139, 1.0)', width=3)
-#         )
+        marker=dict(
+            color="#00cc96",
+            line=dict(color='white', width=1)
+        )
     ))
     fig_function_YC.add_trace(go.Bar(
         y=df_yesterday_function_YC['功能'].unique(),
-        x=df_yesterday_function_YC[df_yesterday_function_YC['使用裝置'] == 'MobilePhone']['人次'],
-        name='MobilePhone',
+        x=df_yesterday_function_YC[df_yesterday_function_YC['使用裝置'] == '手機M版']['人次'],
+        name='手機M版',
         orientation='h',
-#         marker=dict(
-#             color='rgba(246, 78, 139, 0.6)',
-#             line=dict(color='rgba(246, 78, 139, 1.0)', width=3)
-#         )
+        marker=dict(
+            color="#ef553b",
+            line=dict(color='white', width=1)
+        )
     ))
     fig_function_YC.add_trace(go.Bar(
         y=df_yesterday_function_YC['功能'].unique(),
-        x=df_yesterday_function_YC[df_yesterday_function_YC['使用裝置'] == 'Desktop']['人次'],
-        name='Desktop',
+        x=df_yesterday_function_YC[df_yesterday_function_YC['使用裝置'] == 'App']['人次'],
+        name='App',
         orientation='h',
-#         marker=dict(
-#             color='rgba(246, 78, 139, 0.6)',
-#             line=dict(color='rgba(246, 78, 139, 1.0)', width=3)
-#         )
+        marker=dict(
+            color="#636dfa",
+            line=dict(color='white', width=1)
+        )
     ))
-
-    fig_function_YC.update_layout(barmode='stack', height=1000, legend=dict(x=0, y=1.05, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'), font_size=18, font_color='white', font_family='Microsoft JhengHei',paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+    fig_function_YC.update_layout(
+        barmode='stack', 
+        height=1000, 
+        legend=dict(x=0, y=1.05, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'), 
+        font_size=18, 
+        font_color='white', 
+        font_family='Microsoft JhengHei',
+        paper_bgcolor="rgba(0,0,0,0)", 
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
     return fig_function_YC
 
 
@@ -147,74 +178,97 @@ def draw_fig_function_HF(df_yesterday):
     fig_function_HF = go.Figure()
     fig_function_HF.add_trace(go.Bar(
         y=df_yesterday_function_HF['功能'].unique(),
-        x=df_yesterday_function_HF[df_yesterday_function_HF['使用裝置'] == 'app']['人次'],
-        name='app',
+        x=df_yesterday_function_HF[df_yesterday_function_HF['使用裝置'] == 'Web版']['人次'],
+        name='Web版',
         orientation='h',
-#         marker=dict(
-#             color='rgba(246, 78, 139, 0.6)',
-#             line=dict(color='rgba(246, 78, 139, 1.0)', width=3)
-#         )
+        marker=dict(
+            color="#00cc96",
+            line=dict(color='white', width=1)
+        )
     ))
     fig_function_HF.add_trace(go.Bar(
         y=df_yesterday_function_HF['功能'].unique(),
-        x=df_yesterday_function_HF[df_yesterday_function_HF['使用裝置'] == 'MobilePhone']['人次'],
-        name='MobilePhone',
+        x=df_yesterday_function_HF[df_yesterday_function_HF['使用裝置'] == '手機M版']['人次'],
+        name='手機M版',
         orientation='h',
-#         marker=dict(
-#             color='rgba(246, 78, 139, 0.6)',
-#             line=dict(color='rgba(246, 78, 139, 1.0)', width=3)
-#         )
+        marker=dict(
+            color="#ef553b",
+            line=dict(color='white', width=1)
+        )
     ))
     fig_function_HF.add_trace(go.Bar(
         y=df_yesterday_function_HF['功能'].unique(),
-        x=df_yesterday_function_HF[df_yesterday_function_HF['使用裝置'] == 'Desktop']['人次'],
-        name='Desktop',
+        x=df_yesterday_function_HF[df_yesterday_function_HF['使用裝置'] == 'App']['人次'],
+        name='App',
         orientation='h',
-#         marker=dict(
-#             color='rgba(246, 78, 139, 0.6)',
-#             line=dict(color='rgba(246, 78, 139, 1.0)', width=3)
-#         )
+        marker=dict(
+            color="#636dfa",
+            line=dict(color='white', width=1)
+        )
     ))
-
-    fig_function_HF.update_layout(barmode='stack', height=1000, legend=dict(x=0, y=1.05, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'), font_size=18, font_color='white', font_family='Microsoft JhengHei',paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+    
+    fig_function_HF.update_layout(
+        barmode='stack', 
+        height=1000, 
+        legend=dict(x=0, y=1.05, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'), 
+        font_size=18, 
+        font_color='white', 
+        font_family='Microsoft JhengHei',
+        paper_bgcolor="rgba(0,0,0,0)", 
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
     return fig_function_HF
 
 
 def draw_fig_timeSeries_YC(df_timeSeries):
     df_timeSeries_YC = df_timeSeries[df_timeSeries['訪問網站'] == '房仲網'].groupby(['訪問日期', '使用裝置']).sum().reset_index().iloc[:, [0,1,2]]
-    df_timeSeries_YC_app = df_timeSeries_YC[df_timeSeries_YC['使用裝置'] == 'app']
-    df_timeSeries_YC_MobilePhone = df_timeSeries_YC[df_timeSeries_YC['使用裝置'] == 'MobilePhone']
-    df_timeSeries_YC_Desktop = df_timeSeries_YC[df_timeSeries_YC['使用裝置'] == 'Desktop']
+    df_timeSeries_YC_app = df_timeSeries_YC[df_timeSeries_YC['使用裝置'] == 'App']
+    df_timeSeries_YC_MobilePhone = df_timeSeries_YC[df_timeSeries_YC['使用裝置'] == '手機M版']
+    df_timeSeries_YC_Desktop = df_timeSeries_YC[df_timeSeries_YC['使用裝置'] == 'Web版']
     fig_timeSeries_YC = go.Figure()
     fig_timeSeries_YC.add_trace(go.Scatter(x=df_timeSeries_YC_app['訪問日期'], y=df_timeSeries_YC_app['訪問人次'],
                         mode='lines+markers',
-                        name='app'))
+                        name='App'))
     fig_timeSeries_YC.add_trace(go.Scatter(x=df_timeSeries_YC_MobilePhone['訪問日期'], y=df_timeSeries_YC_MobilePhone['訪問人次'],
                         mode='lines+markers',
-                        name='MobilePhone'))
+                        name='手機M版'))
     fig_timeSeries_YC.add_trace(go.Scatter(x=df_timeSeries_YC_Desktop['訪問日期'], y=df_timeSeries_YC_Desktop['訪問人次'],
                         mode='lines+markers',
-                        name='Desktop'))
-    fig_timeSeries_YC.update_layout(font_size=18, font_family='Microsoft JhengHei', font_color='white', paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(0,0,0,0)",legend=dict(x=0, y=1.2, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'),)
+                        name='Web版'))
+    fig_timeSeries_YC.update_layout(
+        font_size=18, 
+        font_family='Microsoft JhengHei', 
+        font_color='white', 
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        legend=dict(x=0, y=1.2, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'),
+    )
     return fig_timeSeries_YC
 
 
 def draw_fig_timeSeries_HF(df_timeSeries):
     df_timeSeries_HF = df_timeSeries[df_timeSeries['訪問網站'] == '好房網'].groupby(['訪問日期', '使用裝置']).sum().reset_index().iloc[:, [0,1,2]]
-    df_timeSeries_HF_app = df_timeSeries_HF[df_timeSeries_HF['使用裝置'] == 'app']
-    df_timeSeries_HF_MobilePhone = df_timeSeries_HF[df_timeSeries_HF['使用裝置'] == 'MobilePhone']
-    df_timeSeries_HF_Desktop = df_timeSeries_HF[df_timeSeries_HF['使用裝置'] == 'Desktop']
+    df_timeSeries_HF_app = df_timeSeries_HF[df_timeSeries_HF['使用裝置'] == 'App']
+    df_timeSeries_HF_MobilePhone = df_timeSeries_HF[df_timeSeries_HF['使用裝置'] == '手機M版']
+    df_timeSeries_HF_Desktop = df_timeSeries_HF[df_timeSeries_HF['使用裝置'] == 'Web版']
     fig_timeSeries_HF = go.Figure()
     fig_timeSeries_HF.add_trace(go.Scatter(x=df_timeSeries_HF_app['訪問日期'], y=df_timeSeries_HF_app['訪問人次'],
                         mode='lines+markers',
-                        name='app'))
+                        name='App'))
     fig_timeSeries_HF.add_trace(go.Scatter(x=df_timeSeries_HF_MobilePhone['訪問日期'], y=df_timeSeries_HF_MobilePhone['訪問人次'],
                         mode='lines+markers',
-                        name='MobilePhone'))
+                        name='手機M版'))
     fig_timeSeries_HF.add_trace(go.Scatter(x=df_timeSeries_HF_Desktop['訪問日期'], y=df_timeSeries_HF_Desktop['訪問人次'],
                         mode='lines+markers',
-                        name='Desktop'))
-    fig_timeSeries_HF.update_layout(font_size=18, font_family='Microsoft JhengHei', font_color='white', paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(0,0,0,0)",legend=dict(x=0, y=1.2, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'),)
+                        name='Web版'))
+    fig_timeSeries_HF.update_layout(
+        font_size=18, 
+        font_family='Microsoft JhengHei', 
+        font_color='white', 
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        legend=dict(x=0, y=1.2, bgcolor='rgba(255,255,255,0)', bordercolor='rgba(255,255,255,0)', orientation='h'),
+    )
     return fig_timeSeries_HF
 
 
